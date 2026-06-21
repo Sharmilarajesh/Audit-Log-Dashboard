@@ -1,7 +1,14 @@
 const Log = require('../models/Log');
 
 const insertLogs = async (logs) => {
-  return await Log.insertMany(logs, { ordered: false });
+  try {
+    return await Log.insertMany(logs, { ordered: false });
+  } catch (error) {
+    if (error.code === 11000) {
+      return error.insertedDocs || [];
+    }
+    throw error;
+  }
 };
 
 const getLogs = async (query) => {
@@ -18,19 +25,7 @@ const getLogs = async (query) => {
 
   const filter = {};
 
-  if (search) {
-    const escapedSearch = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const searchRegex = new RegExp(escapedSearch, 'i');
-    filter.$or = [
-      { actor: searchRegex },
-      { action: searchRegex },
-      { resource: searchRegex },
-      { role: searchRegex },
-      { resourceType: searchRegex },
-      { ipAddress: searchRegex },
-      { region: searchRegex }
-    ];
-  }
+  if (search) filter.$text = { $search: search };
   if (severity) filter.severity = severity;
   if (status)   filter.status = status;
   if (role)     filter.role = role;

@@ -50,11 +50,19 @@ const uploadLogs = async (req, res) => {
     const result = await insertLogs(logs);
     const inserted = result.length;
     const skipped = logs.length - inserted;
+
     res.status(201).json({
       message: `${inserted} logs inserted successfully${skipped > 0 ? `, ${skipped} duplicate(s) skipped` : ''}`
     });
 
   } catch (error) {
+    if (error.code === 11000 || (error.writeErrors && error.writeErrors.some(e => e.code === 11000))) {
+      const inserted = error.result?.nInserted || 0;
+      const skipped = logs.length - inserted;
+      return res.status(201).json({
+        message: `${inserted} logs inserted successfully, ${skipped} duplicate(s) skipped`
+      });
+    }
     res.status(500).json({ message: error.message });
   }
 };
