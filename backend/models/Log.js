@@ -24,5 +24,9 @@ logSchema.index({ actor: "text", action: "text", resource: "text" });
 logSchema.index({ severity: 1 });
 logSchema.index({ status: 1 });
 logSchema.index({ timestamp: -1 });
+logSchema.index(
+  { actor: 1, action: 1, resource: 1, timestamp: 1 },
+  { unique: true }
+);
 
 module.exports = mongoose.model("Log", logSchema);

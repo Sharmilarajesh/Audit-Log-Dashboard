@@ -16,7 +16,7 @@ const uploadLogs = async (req, res) => {
 
     for (let i = 0; i < logs.length; i++) {
       const log = logs[i];
-      const rowNum = i + 2; // Row 1 is header in Excel
+      const rowNum = i + 2;
 
       for (const field of REQUIRED_FIELDS) {
         if (!log[field] || String(log[field]).trim() === '') {
@@ -48,7 +48,11 @@ const uploadLogs = async (req, res) => {
     }
 
     const result = await insertLogs(logs);
-    res.status(201).json({ message: `${result.length} logs inserted successfully` });
+    const inserted = result.length;
+    const skipped = logs.length - inserted;
+    res.status(201).json({
+      message: `${inserted} logs inserted successfully${skipped > 0 ? `, ${skipped} duplicate(s) skipped` : ''}`
+    });
 
   } catch (error) {
     res.status(500).json({ message: error.message });
