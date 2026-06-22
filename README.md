@@ -1,7 +1,7 @@
 
 # AuditWatch — Audit Log Dashboard
 
-A full-stack security audit log dashboard built with React, Node.js, Express, and MongoDB. Security engineers can upload bulk audit logs via Excel, then search, filter, sort, and paginate through them in real time — all processing handled server-side.
+A full-stack security audit log dashboard built with React, Node.js, Express, and MongoDB. Security engineers can upload bulk audit logs via Excel, then search, filter, sort, and paginate through them in real time - all processing handled server-side.
 
 ---
 
@@ -43,7 +43,7 @@ Sharmila Rajesh
 
 - Upload bulk audit logs from an Excel (.xlsx) file
 - View all logs in a table with search, filter, sort and pagination
-- All filtering, sorting, searching and pagination happens on the server — not in the browser
+- All filtering, sorting, searching and pagination happens on the server - not in the browser
 - Duplicate logs are automatically detected and skipped
 - Invalid rows are reported with row number, field name and reason before anything is saved
 
@@ -52,12 +52,12 @@ Sharmila Rajesh
 ## Features
 
 - Bulk Excel upload with drag and drop support
-- Full row-by-row validation — entire batch is rejected if any row has errors, with a detailed error table so the user knows exactly what to fix
-- Duplicate detection — same actor doing same action on same resource at same timestamp is skipped silently
+- Full row-by-row validation - entire batch is rejected if any row has errors, with a detailed error table so the user knows exactly what to fix
+- Duplicate detection - same actor doing same action on same resource at same timestamp is skipped silently
 - Server-side search across actor, action and resource
 - Server-side filter by severity, status and role
 - Server-side sort by actor, severity and timestamp
-- Server-side pagination — 20 records per page
+- Server-side pagination - 20 records per page
 - Stats bar showing total logs, HIGH severity count and unresolved count
 - Download sample Excel template from the upload modal
 - Warm white and orange theme with color-coded severity and status badges
@@ -190,15 +190,15 @@ A ready-to-use sample file can be downloaded from the Upload modal inside the ap
 
 ## Technical Decisions
 
-**MongoDB** — Logs are append-only with no joins needed. MongoDB's `insertMany` handles bulk inserts efficiently in a single database call.
+**MongoDB** - Logs are append-only with no joins needed. MongoDB's `insertMany` handles bulk inserts efficiently in a single database call.
 
-**Server-side processing** — All filtering, sorting, searching and pagination runs on the backend against MongoDB indexes. The browser only receives the records needed for the current page.
+**Server-side processing** - All filtering, sorting, searching and pagination runs on the backend against MongoDB indexes. The browser only receives the records needed for the current page.
 
-**Indexes** — Added indexes on severity, status and timestamp for fast filtering. Text index on actor, action and resource for search. Without indexes MongoDB scans every record on every query.
+**Indexes** - Added indexes on severity, status and timestamp for fast filtering. Text index on actor, action and resource for search. Without indexes MongoDB scans every record on every query.
 
-**Duplicate detection** — Compound unique index on actor + action + resource + timestamp. All four together identify a unique event. Duplicates are skipped using `ordered: false` in insertMany without stopping the rest of the batch.
+**Duplicate detection** - Compound unique index on actor + action + resource + timestamp. All four together identify a unique event. Duplicates are skipped using `ordered: false` in insertMany without stopping the rest of the batch.
 
-**Full batch validation** — All rows are validated before any insert. If any row fails, the entire batch is rejected with a table showing row number, field and reason. User fixes everything at once and re-uploads.
+**Full batch validation** - All rows are validated before any insert. If any row fails, the entire batch is rejected with a table showing row number, field and reason. User fixes everything at once and re-uploads.
 
-**SheetJS for Excel parsing** — Excel is parsed on the frontend and converted to JSON before sending to the backend. Keeps the upload API simple — it only receives a plain JSON array.
+**SheetJS for Excel parsing** - Excel is parsed on the frontend and converted to JSON before sending to the backend. Keeps the upload API simple - it only receives a plain JSON array.
 
